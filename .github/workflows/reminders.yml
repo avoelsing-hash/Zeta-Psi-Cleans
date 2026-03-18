@@ -1,0 +1,30 @@
+name: Send house clean reminders
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # 11:00 UTC every day (adjust to 7–8am Boston)
+  workflow_dispatch:      # allow manual run from Actions tab
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm install
+
+      - name: Send reminder emails
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: |
+          node path/to/your/reminder-script.js
